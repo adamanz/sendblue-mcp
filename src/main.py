@@ -25,7 +25,7 @@ logging.basicConfig(
 logger = logging.getLogger("sendblue-mcp")
 
 # Initialize FastMCP server
-mcp = FastMCP("sendblue")
+mcp = FastMCP("sendblue-mcp")
 
 # Register tools with FastMCP
 mcp.tool()(send_message)
@@ -42,20 +42,8 @@ def main():
         # Check that API credentials are configured
         check_credentials()
         
-        # Determine transport method from config
-        from src.config import MCP_TRANSPORT, MCP_HTTP_PORT
-        
-        # For Smithery deployment, we'll default to stdio
-        # but set the port in environment for Smithery to use
-        if os.environ.get("SMITHERY_DEPLOYMENT") == "true":
-            transport = "stdio" 
-            os.environ["PORT"] = str(MCP_HTTP_PORT)
-            logger.info(f"Smithery deployment mode - Using stdio transport, port {MCP_HTTP_PORT}")
-        else:
-            transport = MCP_TRANSPORT.lower()
-            if transport not in ["stdio"]:
-                logger.warning(f"Unsupported transport '{transport}'. Defaulting to 'stdio'.")
-                transport = "stdio"
+        # Always use stdio transport for MCP servers
+        transport = "stdio"
         
         # Log that we're starting
         logger.info(f"Starting Sendblue MCP server with {transport} transport")
@@ -67,6 +55,8 @@ def main():
         exit(1)
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
+        import traceback
+        traceback.print_exc()
         exit(1)
 
 if __name__ == "__main__":

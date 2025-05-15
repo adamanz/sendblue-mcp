@@ -1,22 +1,32 @@
 version: 1
 name: sendblue-mcp
-description: Sendblue API MCP Server
-start:
-  command: ["python", "-m", "src.main"]
-  port: 5000
-environment:
-  - name: SENDBLUE_API_KEY_ID
-    description: "Your Sendblue API Key ID from your Sendblue dashboard"
-    required: true
-  - name: SENDBLUE_API_SECRET_KEY
-    description: "Your Sendblue API Secret Key from your Sendblue dashboard"
-    required: true
-    secret: true
-  - name: SMITHERY_DEPLOYMENT
-    description: "Flag to indicate Smithery deployment"
-    default: "true"
-    required: false
-  - name: MCP_TRANSPORT
-    description: "MCP transport method"
-    default: "stdio"
-    required: false
+description: "Sendblue API MCP Server - Send and receive iMessages/SMS programmatically"
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: ["apiKey", "apiSecret"]
+    properties:
+      apiKey:
+        type: string
+        title: "Sendblue API Key ID"
+        description: "Your Sendblue API Key ID from the dashboard"
+      apiSecret:
+        type: string
+        title: "Sendblue API Secret"
+        description: "Your Sendblue API Secret Key"
+        secret: true
+  commandFunction: |
+    (config) => ({
+      command: "python",
+      args: ["-m", "src.main"],
+      env: {
+        SENDBLUE_API_KEY_ID: config.apiKey,
+        SENDBLUE_API_SECRET_KEY: config.apiSecret,
+        MCP_TRANSPORT: "stdio",
+        PYTHONUNBUFFERED: "1"
+      }
+    })
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
