@@ -4,24 +4,14 @@ description: Sendblue API MCP Server
 start:
   command: ["python", "-m", "src.main"]
   port: 5000
-  transport: http
 environment:
   - name: SENDBLUE_API_KEY_ID
     description: "Your Sendblue API Key ID from your Sendblue dashboard"
     required: true
-    help: "You can find this in your Sendblue account under API settings at https://sendblue.co/"
   - name: SENDBLUE_API_SECRET_KEY
     description: "Your Sendblue API Secret Key from your Sendblue dashboard"
     required: true
     secret: true
-    help: "This is your secret API key from Sendblue. Keep this value secure and never share it."
   - name: MCP_TRANSPORT
-    description: "MCP transport method (stdio or http)"
+    description: "MCP transport method"
     default: "http"
-    required: false
-    help: "For Smithery deployments, this should almost always remain as 'http'"
-  - name: MCP_HTTP_PORT
-    description: "Port for HTTP transport when using http transport"
-    default: "5000"
-    required: false
-    help: "This should match the port specified in the start.port configuration above"
