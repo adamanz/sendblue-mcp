@@ -42,17 +42,25 @@ def main():
         # Check that API credentials are configured
         check_credentials()
         
-        # Determine transport method
-        transport = os.environ.get("MCP_TRANSPORT", "stdio")
-        if transport not in ["stdio", "http"]:
-            logger.warning(f"Invalid transport '{transport}'. Defaulting to 'stdio'.")
+        # Determine transport method from config
+        from src.config import MCP_TRANSPORT, MCP_HTTP_PORT
+        
+        if MCP_TRANSPORT not in ["stdio", "http"]:
+            logger.warning(f"Invalid transport '{MCP_TRANSPORT}'. Defaulting to 'stdio'.")
             transport = "stdio"
+        else:
+            transport = MCP_TRANSPORT
         
         # Log that we're starting
-        logger.info(f"Starting Sendblue MCP server with {transport} transport...")
+        logger.info(f"Starting Sendblue MCP server with {transport} transport")
+        if transport == "http":
+            logger.info(f"HTTP server will listen on port {MCP_HTTP_PORT}")
         
         # Initialize and run the server
-        mcp.run(transport=transport)
+        if transport == "http":
+            mcp.run(transport=transport, port=MCP_HTTP_PORT)
+        else:
+            mcp.run(transport=transport)
     except ValueError as e:
         logger.error(f"Configuration error: {str(e)}")
         exit(1)

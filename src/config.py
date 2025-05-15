@@ -12,6 +12,10 @@ load_dotenv()
 SENDBLUE_API_KEY_ID = os.environ.get("SENDBLUE_API_KEY_ID")
 SENDBLUE_API_SECRET_KEY = os.environ.get("SENDBLUE_API_SECRET_KEY")
 
+# MCP server configuration
+MCP_TRANSPORT = os.environ.get("MCP_TRANSPORT", "stdio")
+MCP_HTTP_PORT = int(os.environ.get("MCP_HTTP_PORT", 5000))
+
 # Sendblue API constants
 SENDBLUE_API_BASE_URL = "https://api.sendblue.co/api"
 SENDBLUE_ACCOUNTS_BASE_URL = "https://api.sendblue.co/accounts"

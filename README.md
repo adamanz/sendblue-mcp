@@ -114,15 +114,64 @@ smithery deploy
 
 ## API Credentials
 
-You need to obtain API credentials from Sendblue by signing up at [https://sendblue.co/](https://sendblue.co/).
+### Obtaining Sendblue API Keys
+
+1. Sign up for a Sendblue account at [https://sendblue.co/](https://sendblue.co/)
+2. Once logged in, navigate to the API dashboard
+3. Generate your API Key ID and API Secret Key
+4. Store these credentials securely as they will be needed to authenticate with the Sendblue API
+
+### Setting Up Credentials
+
+The server requires two main API credentials:
+
+- **SENDBLUE_API_KEY_ID**: Your Sendblue API Key ID
+- **SENDBLUE_API_SECRET_KEY**: Your Sendblue API Secret Key
+
+These can be provided in any of the following ways:
+
+#### 1. Using a .env File (Local Development)
+
+Create a `.env` file in the root directory with your credentials:
+
+```
+SENDBLUE_API_KEY_ID=your_api_key_id_here
+SENDBLUE_API_SECRET_KEY=your_api_secret_key_here
+MCP_TRANSPORT=stdio  # or http for web transport
+```
+
+#### 2. For Claude Desktop Integration
+
+When using with Claude Desktop, you can also set these environment variables in your system profile or pass them directly in the Claude Desktop configuration file:
+
+```json
+{
+   "mcpServers": {
+      "sendblue": {
+         "command": "python",
+         "args": [
+            "-m",
+            "src.main"
+         ],
+         "env": {
+            "SENDBLUE_API_KEY_ID": "your_api_key_id_here",
+            "SENDBLUE_API_SECRET_KEY": "your_api_secret_key_here"
+         }
+      }
+   }
+}
+```
+
+#### 3. For Smithery Deployment
+
+When deploying to Smithery, you'll be prompted to input these environment variables through the Smithery interface. The deployment will securely store these values and provide them to your server at runtime.
 
 ## Configuration
 
-Configuration is managed through environment variables, which can be set in a `.env` file:
+Additional configuration is managed through environment variables:
 
-- `SENDBLUE_API_KEY_ID`: Your Sendblue API Key ID
-- `SENDBLUE_API_SECRET_KEY`: Your Sendblue API Secret Key
 - `MCP_TRANSPORT`: Transport method (`stdio` or `http`); defaults to `stdio`
+- `MCP_HTTP_PORT`: Port number for HTTP transport; defaults to `5000`
 
 ## Testing
 
