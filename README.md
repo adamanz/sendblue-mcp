@@ -42,6 +42,57 @@ nano .env  # Edit with your API credentials
 python -m src.main
 ```
 
+## Client Integration
+
+### Claude Desktop Integration
+
+Claude Desktop allows you to use the Sendblue MCP server directly from the Claude interface:
+
+1. Locate the Claude Desktop configuration file:
+   - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows**: `%AppData%\Claude\claude_desktop_config.json`
+
+2. Create or edit the file and add the following configuration:
+   ```json
+   {
+      "mcpServers": {
+         "sendblue": {
+            "command": "python",
+            "args": [
+               "-m",
+               "src.main",
+               "--directory",
+               "/absolute/path/to/sendblue-mcp"
+            ]
+         }
+      }
+   }
+   ```
+
+3. Replace `/absolute/path/to/sendblue-mcp` with the actual path to your Sendblue MCP server directory
+4. Save the file and restart Claude Desktop
+5. The Sendblue tools will appear in the Claude interface when you click on the hammer icon
+
+### Cursor Integration
+
+1. Open Cursor and go to Settings (gear icon or Cmd+,/Ctrl+,)
+2. Navigate to "Extensions" > "AI" > "MCP Servers"
+3. Click "Add Server" and enter:
+   - **Server Name**: `sendblue`
+   - **Command**: `python -m src.main`
+   - **Working Directory**: `/absolute/path/to/sendblue-mcp`
+4. Save the configuration and restart Cursor
+5. You can now use Sendblue tools within Cursor's AI features
+
+### Troubleshooting Integration
+
+If the MCP server doesn't appear in Claude Desktop:
+
+1. Check Claude's logs (macOS): `tail -n 20 -f ~/Library/Logs/Claude/mcp*.log`
+2. Verify your `.env` file has valid Sendblue API credentials
+3. Make sure the path in the config file is absolute and correct
+4. Try restarting the client application completely
+
 ## Deployment
 
 ### Using Docker
@@ -72,6 +123,19 @@ Configuration is managed through environment variables, which can be set in a `.
 - `SENDBLUE_API_KEY_ID`: Your Sendblue API Key ID
 - `SENDBLUE_API_SECRET_KEY`: Your Sendblue API Secret Key
 - `MCP_TRANSPORT`: Transport method (`stdio` or `http`); defaults to `stdio`
+
+## Testing
+
+The project includes a comprehensive test suite:
+
+```sh
+python -m unittest discover -s tests
+```
+
+## Documentation
+
+- [API Documentation](./api-docs/README.md) - Generated documentation for the Sendblue API
+- [Sendblue Documentation](./sendblue-docs/README.md) - Original Sendblue API documentation
 
 ## License
 
