@@ -1,0 +1,3 @@
+"""
+Sendblue MCP server package.
+"""

@@ -1,0 +1,18 @@
+version: 1
+name: sendblue-mcp
+description: Sendblue API MCP Server
+port: 5000
+transport: http
+start: python -m src.main
+environment:
+  - name: SENDBLUE_API_KEY_ID
+    description: "Sendblue API Key ID"
+    required: true
+  - name: SENDBLUE_API_SECRET_KEY
+    description: "Sendblue API Secret Key"
+    required: true
+    secret: true
+  - name: MCP_TRANSPORT
+    description: "MCP transport method (stdio or http)"
+    default: "http"
+    required: false
