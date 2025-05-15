@@ -1,0 +1,216 @@
+Directory structure:
+└── sendblue-api-sendblue-python/
+    ├── README.md
+    ├── LICENSE
+    ├── pyproject.toml
+    └── sendblue/
+        ├── __init__.py
+        └── sendblue.py
+
+================================================
+FILE: README.md
+================================================
+# Sendblue Python Library
+
+## Overview
+
+This package is a Python wrapper for the Sendblue API. It provides a simple interface for sending and receiving messages.
+
+## Prerequisites
+
+You will need to get API keys by signing up for a Sendblue account. You can do so [here](https://sendblue.co/).
+
+## Installation
+
+```bash
+pip install sendblue
+```
+
+## Usage
+
+### Initializing
+
+```python
+from sendblue import Sendblue
+
+# Load your key from an environment variable or secret management service
+# (do not include your key directly in your code)
+SENDBLUE_API_KEY = os.environ.get('SENDBLUE_API_KEY')
+SENDBLUE_API_SECRET = os.environ.get('SENDBLUE_API_SECRET')
+
+sendblue = Sendblue(SENDBLUE_API_KEY, SENDBLUE_API_SECRET)
+```
+
+### Send Message
+
+```python
+response = sendblue.send_message('+19998887777', 'Hello from Sendblue!', send_style='invisible', media_url='https://source.unsplash.com/random.png', status_callback='https://example.com/callback')
+```
+
+### Send Group Message
+
+```python
+response = sendblue.send_group_message(['+19998887777', '+19998887778'], 'Hello from Sendblue!', send_style='invisible', media_url='https://source.unsplash.com/random.png', status_callback='https://example.com/callback')
+```
+
+### Modify Group
+
+```python
+response = sendblue.modify_group('group_id', 'add_recipient', '+19998887777')
+```
+
+### Lookup Number
+
+```python
+response = sendblue.lookup('+19998887777')
+```
+
+### Send Typing Indicator
+
+```python
+response = sendblue.send_typing_indicator('+19998887777')
+```
+
+
+================================================
+FILE: LICENSE
+================================================
+MIT License
+
+Copyright (c) 2023 sendblue (https://sendblue.co)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+================================================
+FILE: pyproject.toml
+================================================
+[project]
+name = "sendblue"
+version = "0.1.4"
+description = "This package is a Python wrapper for the Sendblue API. It provides a simple interface for sending and receiving messages."
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+keywords = ["imessage", "api", "sms", "python", "sendblue", "sendblue python", "sendblue api", "imessage api", "sms api"]
+authors = [
+  {name = "Elliott Storey", email = "storey.elliott@gmail.com"},
+  {name = "Nikita Jerschow", email = "nikita@sendblue.co"}
+]
+maintainers = [
+  {name = "Elliott Storey", email = "storey.elliott@gmail.com"},
+  {name = "Nikita Jerschow", email = "nikita@sendblue.co"}
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Communications :: Chat",
+  "Topic :: Communications :: Internet Phone",
+  "Topic :: Communications ::Telephony",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 2",
+  "Programming Language :: Python :: 3",
+  "Typing :: Typed"
+]
+
+[project.urls]
+"Homepage" = "https://sendblue.co"
+"Bug Reports" = "https://github.com/sendblue-api/sendblue-python/issues"
+"Source" = "https://github.com/sendblue-api/sendblue-python"
+
+[build-system]
+requires = ["setuptools>=43.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+================================================
+FILE: sendblue/__init__.py
+================================================
+from .sendblue import Sendblue
+
+
+
+================================================
+FILE: sendblue/sendblue.py
+================================================
+import requests
+
+class Sendblue:
+    def __init__(self, api_key: str, api_secret: str) -> None:
+        self.api_key = api_key
+        self.api_secret = api_secret
+        self.base_url = 'https://api.sendblue.co/api'
+
+    def request(self, endpoint: str, data: dict = None) -> dict:
+        url = self.base_url + endpoint
+        headers = {
+            'sb-api-key-id': self.api_key,
+            'sb-api-secret-key': self.api_secret,
+            'Content-Type': 'application/json'
+        }
+
+        if data:
+            response = requests.post(url, headers=headers, json=data)
+        else:
+            response = requests.get(url, headers=headers)
+
+        if not response.ok:
+            raise Exception("Error: " + response.text)
+
+        return response.json()
+
+    def send_message(self, number: str, content: str, send_style: str = None, media_url: str = None, status_callback: str = None):
+        data = {
+            'number': number,
+            'content': content,
+            'send_style': send_style,
+            'media_url': media_url,
+            'status_callback': status_callback
+        }
+        return self.request('/send-message', data)
+
+    def send_group_message(self, numbers: list[str], content: str, group_id: str = None, send_style: str = None, media_url: str = None, status_callback: str = None):
+        data = {
+            'numbers': numbers,
+            'group_id': group_id,
+            'content': content,
+            'send_style': send_style,
+            'media_url': media_url,
+            'status_callback': status_callback
+        }
+        return self.request('/send-group-message', data)
+
+    def modify_group(self, group_id: str, modify_type: str, number: str):
+        data = {
+            "group_id": group_id,
+            "modify_type": modify_type,
+            "number": number
+        }
+        return self.request('/modify-group', data)
+
+    def lookup(self, number: str):
+        return self.request(f'/evaluate-service?number={number}')
+
+    def send_typing_indicator(self, number: str):
+        data = {
+            'number': number
+        }
+        return self.request(f'/send-typing-indicator?number={number}', data)
+
+
