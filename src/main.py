@@ -45,22 +45,23 @@ def main():
         # Determine transport method from config
         from src.config import MCP_TRANSPORT, MCP_HTTP_PORT
         
-        if MCP_TRANSPORT not in ["stdio", "http"]:
-            logger.warning(f"Invalid transport '{MCP_TRANSPORT}'. Defaulting to 'stdio'.")
-            transport = "stdio"
+        # For Smithery deployment, we'll default to stdio
+        # but set the port in environment for Smithery to use
+        if os.environ.get("SMITHERY_DEPLOYMENT") == "true":
+            transport = "stdio" 
+            os.environ["PORT"] = str(MCP_HTTP_PORT)
+            logger.info(f"Smithery deployment mode - Using stdio transport, port {MCP_HTTP_PORT}")
         else:
-            transport = MCP_TRANSPORT
+            transport = MCP_TRANSPORT.lower()
+            if transport not in ["stdio"]:
+                logger.warning(f"Unsupported transport '{transport}'. Defaulting to 'stdio'.")
+                transport = "stdio"
         
         # Log that we're starting
         logger.info(f"Starting Sendblue MCP server with {transport} transport")
-        if transport == "http":
-            logger.info(f"HTTP server will listen on port {MCP_HTTP_PORT}")
         
         # Initialize and run the server
-        if transport == "http":
-            mcp.run(transport=transport, port=MCP_HTTP_PORT)
-        else:
-            mcp.run(transport=transport)
+        mcp.run(transport=transport)
     except ValueError as e:
         logger.error(f"Configuration error: {str(e)}")
         exit(1)

@@ -12,6 +12,11 @@ environment:
     description: "Your Sendblue API Secret Key from your Sendblue dashboard"
     required: true
     secret: true
+  - name: SMITHERY_DEPLOYMENT
+    description: "Flag to indicate Smithery deployment"
+    default: "true"
+    required: false
   - name: MCP_TRANSPORT
     description: "MCP transport method"
-    default: "http"
+    default: "stdio"
+    required: false
