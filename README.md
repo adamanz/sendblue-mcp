@@ -18,6 +18,43 @@ The server provides the following tools:
 - `add_recipient_to_group`: Add new recipients to existing group chats
 - `upload_media_for_sending`: Upload media from URLs to Sendblue servers
 
+## Quick Start
+
+### Fastest Way to Get Started
+
+#### For Claude Desktop
+```sh
+# Clone the repository
+git clone https://github.com/your-username/sendblue-mcp.git
+cd sendblue-mcp
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up credentials
+cp sample.env .env
+# Edit .env and add your API credentials
+
+# Add to Claude Desktop config (macOS)
+echo '{
+  "mcpServers": {
+    "sendblue": {
+      "command": "python",
+      "args": ["-m", "src.main"],
+      "cwd": "'$(pwd)'"
+    }
+  }
+}' > ~/Library/Application\ Support/Claude/claude_desktop_config.json
+
+# Restart Claude Desktop
+```
+
+#### For Local Testing
+```sh
+# After cloning and installing dependencies
+python start_sendblue.py
+```
+
 ## Setup
 
 ### Prerequisites
@@ -27,20 +64,47 @@ The server provides the following tools:
 
 ### Installation
 
-1. Clone this repository
-2. Install dependencies: `pip install -r requirements.txt`
-3. Copy `sample.env` to `.env` and configure your Sendblue API credentials
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/your-username/sendblue-mcp.git
+   cd sendblue-mcp
+   ```
 
-```sh
-cp sample.env .env
-nano .env  # Edit with your API credentials
-```
+2. Install dependencies:
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+3. Configure your Sendblue API credentials:
+   ```sh
+   cp sample.env .env
+   # Edit .env to add your API credentials
+   ```
+
+   Open `.env` and add:
+   ```
+   SENDBLUE_API_KEY_ID=your_api_key_id_here
+   SENDBLUE_API_SECRET_KEY=your_api_secret_key_here
+   ```
 
 ### Running Locally
 
-```sh
-python -m src.main
-```
+1. Ensure you're in the project directory:
+   ```sh
+   cd /path/to/sendblue-mcp
+   ```
+
+2. Run the server:
+   ```sh
+   python -m src.main
+   ```
+
+   Or use the convenience script:
+   ```sh
+   python start_sendblue.py
+   ```
+
+   The server will start using the configuration from your `.env` file.
 
 ## Client Integration
 
@@ -75,14 +139,34 @@ Claude Desktop allows you to use the Sendblue MCP server directly from the Claud
 
 ### Cursor Integration
 
-1. Open Cursor and go to Settings (gear icon or Cmd+,/Ctrl+,)
-2. Navigate to "Extensions" > "AI" > "MCP Servers"
-3. Click "Add Server" and enter:
+To add the Sendblue MCP server to Cursor:
+
+1. Open Cursor Settings:
+   - **macOS**: Press `Cmd + ,`
+   - **Windows/Linux**: Press `Ctrl + ,`
+
+2. Navigate to the MCP settings:
+   - Go to "Features" > "MCP Servers"
+
+3. Click "Add Server" and configure:
    - **Server Name**: `sendblue`
-   - **Command**: `python -m src.main`
+   - **Command**: `python`
+   - **Args**: `["-m", "src.main"]`
    - **Working Directory**: `/absolute/path/to/sendblue-mcp`
-4. Save the configuration and restart Cursor
-5. You can now use Sendblue tools within Cursor's AI features
+   - **Environment Variables**:
+     ```json
+     {
+       "SENDBLUE_API_KEY_ID": "your_api_key_id",
+       "SENDBLUE_API_SECRET_KEY": "your_api_secret_key"
+     }
+     ```
+
+4. Save and restart Cursor
+
+5. Verify the server is connected:
+   - Open the AI chat
+   - You should see Sendblue tools available when you click the tools icon
+   - Try running `@sendblue send test message` to confirm it's working
 
 ### Troubleshooting Integration
 
