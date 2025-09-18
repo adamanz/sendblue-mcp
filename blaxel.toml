@@ -1,0 +1,14 @@
+name = "sendblue-mcp-blaxel"
+workspace = "sendblue"
+type = "function"
+
+[env]
+MCP_TRANSPORT = "http"
+DEFAULT_REGION = "us-east-1"
+
+[[triggers]]
+  id = "sendblue-mcp-trigger"
+  type = "http"
+[triggers.configuration]
+  path = "functions/sendblue-mcp"
+  authenticationType = "private"
