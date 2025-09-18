@@ -39,20 +39,21 @@ mcp.tool()(upload_media_for_sending)
 def main():
     """Main entry point for the server."""
     try:
-        # Check that API credentials are configured
-        check_credentials()
-        
+        # Check that API credentials are configured (warning only for local dev)
+        try:
+            check_credentials()
+            logger.info("Sendblue API credentials found")
+        except ValueError as e:
+            logger.warning(f"Configuration warning: {str(e)} - Credentials must be provided when making API calls")
+
         # Always use stdio transport for MCP servers
         transport = "stdio"
-        
+
         # Log that we're starting
         logger.info(f"Starting Sendblue MCP server with {transport} transport")
-        
+
         # Initialize and run the server
         mcp.run(transport=transport)
-    except ValueError as e:
-        logger.error(f"Configuration error: {str(e)}")
-        exit(1)
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         import traceback

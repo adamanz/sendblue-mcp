@@ -5,9 +5,7 @@ This file serves as the main entrypoint for the Blaxel deployment.
 import os
 import logging
 from mcp.server.fastmcp import FastMCP
-from blaxel.runtime import blaxel_handler
 
-from src.config import check_credentials
 from src.tools import (
     send_message,
     send_group_message,
@@ -37,28 +35,20 @@ mcp.tool()(get_message_history)
 mcp.tool()(add_recipient_to_group)
 mcp.tool()(upload_media_for_sending)
 
-@blaxel_handler
-async def handler(request):
-    """
-    Blaxel handler for MCP server requests.
-    This handler processes incoming MCP protocol requests over HTTP/WebSocket.
-    """
-    try:
-        # Check that API credentials are configured
-        check_credentials()
+def main():
+    """Main entry point for Blaxel deployment."""
+    # Check if we have credentials available (for logging purposes only)
+    api_key = os.environ.get("SENDBLUE_API_KEY_ID")
+    api_secret = os.environ.get("SENDBLUE_API_SECRET_KEY")
 
-        # Process the MCP request
-        logger.info("Processing MCP request via Blaxel")
+    if not api_key or not api_secret:
+        logger.warning("Sendblue API credentials not found in environment. They must be set as secrets in Blaxel.")
+    else:
+        logger.info("Sendblue API credentials detected")
 
-        # The mcp.run() method will handle the request
-        # For Blaxel, we need to use HTTP transport
-        return await mcp.handle_request(request)
-    except ValueError as e:
-        logger.error(f"Configuration error: {str(e)}")
-        return {"error": f"Configuration error: {str(e)}"}, 500
-    except Exception as e:
-        logger.error(f"Unexpected error: {str(e)}")
-        return {"error": f"Internal server error"}, 500
+    # Run the MCP server with HTTP transport for Blaxel
+    logger.info("Starting Sendblue MCP server on Blaxel")
+    mcp.run(transport="http", port=8080)
 
-# Export the handler for Blaxel
-__all__ = ['handler']
+if __name__ == "__main__":
+    main()
