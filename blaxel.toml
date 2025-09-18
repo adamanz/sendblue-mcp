@@ -1,5 +1,5 @@
 name = "sendblue-mcp-blaxel"
-workspace = "sendblue"
+workspace = "simple"
 type = "function"
 
 [env]
