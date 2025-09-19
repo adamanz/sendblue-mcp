@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/adamanz-sendblue-mcp-badge.png)](https://mseep.ai/app/adamanz-sendblue-mcp)
+
 # Sendblue MCP Server
 
 An MCP (Model Context Protocol) server that exposes Sendblue's iMessage and SMS capabilities as tools for LLMs.
